@@ -7,7 +7,7 @@
 #>
 
 param(
-    [string]$RepoUrl = "https://github.com/srujanhrudhay/exam-tracker",
+    [string]$RepoUrl = "https://github.com/SrujanHrudhay/Exam-Tracker",
     [switch]$LaunchAfterInstall = $true
 )
 

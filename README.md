@@ -31,7 +31,7 @@ You do **not** need to be a programmer or know how to use the command prompt. Ev
 
 ### Method 1: The One-Click Windows Setup (Recommended)
 
-1. Download this repository as a `.zip` (click the green **Code** button at the top of this page, then **Download ZIP**), or grab the latest release from the [Releases](https://github.com/srujanhrudhay/exam-tracker/releases) tab.
+1. Download this repository as a `.zip` (click the green **Code** button at the top of this page, then **Download ZIP**), or grab the latest release from the [Releases](https://github.com/SrujanHrudhay/Exam-Tracker/releases) tab.
 2. Extract the downloaded ZIP file to any folder on your computer (e.g., Documents or Desktop).
 3. Open the folder and double-click **`Setup.bat`** (or **`Exam Tracker.vbs`**).
 4. **That's it!**
@@ -55,7 +55,7 @@ If you don't want to run any background scripts or servers:
 For an instant, fully automatic setup directly from PowerShell:
 
 ```powershell
-irm https://raw.githubusercontent.com/srujanhrudhay/exam-tracker/main/install.ps1 | iex
+irm https://raw.githubusercontent.com/SrujanHrudhay/Exam-Tracker/main/install.ps1 | iex
 ```
 
 This installs Exam Tracker to `%LOCALAPPDATA%\Programs\ExamTracker`, adds the Desktop shortcut, and opens the app immediately.
