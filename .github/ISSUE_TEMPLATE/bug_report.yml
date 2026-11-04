@@ -1,0 +1,83 @@
+name: Bug report
+description: Report a reproducible problem with Exam Tracker.
+title: "[Bug]: "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you for reporting a problem. Please provide enough information to reproduce it.
+        Do not attach your personal data.json, exported schedules, credentials, or other private information.
+
+  - type: input
+    id: version
+    attributes:
+      label: Exam Tracker version or commit
+      description: Enter the release version, or write "latest main" if using the source code.
+      placeholder: "e.g. v0.1.0 or latest main"
+    validations:
+      required: false
+
+  - type: dropdown
+    id: operating-system
+    attributes:
+      label: Operating system
+      options:
+        - Windows 11
+        - Windows 10
+        - macOS
+        - Linux
+        - Other
+    validations:
+      required: true
+
+  - type: dropdown
+    id: launch-method
+    attributes:
+      label: How did you launch the application?
+      options:
+        - Setup.bat
+        - Exam Tracker.vbs
+        - index.html (Browser Mode)
+        - PowerShell server (server.ps1)
+        - Node.js server (server.js)
+        - start.sh
+        - Other / Not sure
+    validations:
+      required: true
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: Describe the problem
+      description: Include any visible error message.
+      placeholder: Describe what happened.
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: Steps to reproduce
+      description: List the exact steps someone can follow.
+      placeholder: |
+        1. Open Exam Tracker...
+        2. Select...
+        3. Observe...
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+      placeholder: What did you expect the application to do?
+    validations:
+      required: true
+
+  - type: textarea
+    id: additional
+    attributes:
+      label: Additional context
+      description: Add sanitized error logs or screenshots if useful. Remove private information first.
+    validations:
+      required: false
