@@ -1,0 +1,42 @@
+name: Feature request
+description: Suggest an improvement or a new capability.
+title: "[Feature]: "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Describe the user problem first. This helps evaluate whether the proposed feature would improve Exam Tracker.
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: What problem should this feature solve?
+      description: Explain what is difficult or missing in the current workflow.
+      placeholder: I find it difficult to...
+    validations:
+      required: true
+
+  - type: textarea
+    id: solution
+    attributes:
+      label: Proposed solution
+      description: Describe what you would like the application to do.
+      placeholder: I would like Exam Tracker to...
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+      description: Describe any workarounds or alternative approaches you have tried.
+    validations:
+      required: false
+
+  - type: textarea
+    id: context
+    attributes:
+      label: Additional context
+      description: Add screenshots or examples if useful. Remove private information first.
+    validations:
+      required: false
