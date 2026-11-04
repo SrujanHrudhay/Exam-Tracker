@@ -1,0 +1,139 @@
+{
+  "items": [
+    {
+      "id": "s0",
+      "type": "exam",
+      "name": "IBPS Clerk",
+      "start": "2026-10-10",
+      "end": "2026-10-11",
+      "cat": "Banking",
+      "tent": false
+    },
+    {
+      "id": "s1",
+      "type": "exam",
+      "name": "RRB Sec. Officer",
+      "start": "2026-10-12",
+      "end": "2026-10-14",
+      "cat": "Railways",
+      "tent": false
+    },
+    {
+      "id": "s2",
+      "type": "exam",
+      "name": "PFRDA Grade A",
+      "start": "2026-10-15",
+      "end": "2026-10-16",
+      "cat": "Regulatory",
+      "tent": false
+    },
+    {
+      "id": "s3",
+      "type": "exam",
+      "name": "RRB JE",
+      "start": "2026-10-27",
+      "end": "2026-10-31",
+      "cat": "Railways",
+      "tent": false
+    },
+    {
+      "id": "s4",
+      "type": "exam",
+      "name": "SSC JE",
+      "start": "2026-11-02",
+      "end": "2026-11-07",
+      "cat": "SSC",
+      "tent": false
+    },
+    {
+      "id": "s5",
+      "type": "exam",
+      "name": "RRB ALP",
+      "start": "2026-11-03",
+      "end": "2026-11-06",
+      "cat": "Railways",
+      "tent": false
+    },
+    {
+      "id": "s6",
+      "type": "exam",
+      "name": "IBPS RRB G1 Officer",
+      "start": "2026-11-21",
+      "end": "2026-11-23",
+      "cat": "Banking",
+      "tent": false
+    },
+    {
+      "id": "s7",
+      "type": "exam",
+      "name": "IBPS RRB Office Assistant",
+      "start": "2026-12-06",
+      "end": "2026-12-14",
+      "cat": "Banking",
+      "tent": false
+    },
+    {
+      "id": "i1791270410492",
+      "type": "app",
+      "name": "upsc ese",
+      "start": "2026-10-06",
+      "end": "2026-10-06",
+      "cat": "Other",
+      "tent": false
+    },
+    {
+      "id": "i1791271621859",
+      "type": "app",
+      "name": "Appsc social welfare subordinate service",
+      "start": "2026-10-09",
+      "end": "2026-11-29",
+      "cat": "Other",
+      "tent": false
+    },
+    {
+      "id": "i1791436009348",
+      "type": "app",
+      "name": "APPSC G1, AEE (Envi.), Hort",
+      "start": "2026-10-06",
+      "end": "2026-10-27",
+      "cat": "Other",
+      "tent": false
+    },
+    {
+      "id": "i1791436138109",
+      "type": "exam",
+      "name": "Ignou MBA 18/21/23/26/29/1/5",
+      "start": "2026-12-18",
+      "end": "2027-01-05",
+      "cat": "Other",
+      "tent": true
+    },
+    {
+      "id": "i1791436460511",
+      "type": "exam",
+      "name": "APPSC G1, AEE (Envi.), Hort",
+      "start": "2027-01-24",
+      "end": "2027-01-24",
+      "cat": "Other",
+      "tent": true
+    },
+    {
+      "id": "i1791561644800",
+      "type": "exam",
+      "name": "SSC Cgl",
+      "start": "2026-10-28",
+      "end": "2026-10-28",
+      "cat": "SSC",
+      "tent": false
+    },
+    {
+      "id": "i1792085070806",
+      "type": "exam",
+      "name": "aai juniour executive",
+      "start": "2026-10-26",
+      "end": "2026-10-26",
+      "cat": "Banking",
+      "tent": false
+    }
+  ]
+}

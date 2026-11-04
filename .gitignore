@@ -1,0 +1,23 @@
+# Runtime & browser profile cache
+.profile/
+*.profile/
+profile/
+
+# Temporary files & data writes
+*.tmp
+*.log
+
+# OS generated files
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+.DS_Store
+*.lnk
+
+# Node / Dependencies
+node_modules/
+
+# Editor / IDE configs
+.vscode/
+.idea/

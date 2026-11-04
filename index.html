@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Exam Tracker</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%23d97757'/%3E%3Cpath d='M9 12h14M9 17h8M9 22h11' stroke='white' stroke-width='2.4' stroke-linecap='round'/%3E%3C/svg%3E">
+<script src="lib/chart.umd.js"></script>
+<script src="lib/chartjs-adapter-date-fns.bundle.min.js"></script>
+<style>
+@font-face{font-family:'Inter';font-weight:400;font-display:swap;src:url(lib/fonts/inter-latin-400-normal.woff2) format('woff2')}
+@font-face{font-family:'Inter';font-weight:500;font-display:swap;src:url(lib/fonts/inter-latin-500-normal.woff2) format('woff2')}
+@font-face{font-family:'Inter';font-weight:600;font-display:swap;src:url(lib/fonts/inter-latin-600-normal.woff2) format('woff2')}
+@font-face{font-family:'Source Serif 4';font-weight:400;font-display:swap;src:url(lib/fonts/source-serif-4-latin-400-normal.woff2) format('woff2')}
+@font-face{font-family:'Source Serif 4';font-weight:500;font-display:swap;src:url(lib/fonts/source-serif-4-latin-500-normal.woff2) format('woff2')}
+:root{
+  --bg:#faf9f5;--surface:#fff;--ink:#141413;--muted:#6b6a64;--line:#e8e6dc;--hover:#f3f1e8;
+  --accent:#d97757;--accent-ink:#fff;--blue:#6a9bcc;--green:#788c5d;--orange:#d97757;
+  --serif:'Source Serif 4',Georgia,'Times New Roman',serif;
+  --sans:'Inter',system-ui,-apple-system,'Segoe UI',sans-serif;
+  box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#1f1e1d;--surface:#262624;--ink:#faf9f5;--muted:#a3a198;--line:#3a3935;--hover:#30302e;--blue:#7fa9d4;--green:#8fa573}}
+:root[data-theme="dark"]{--bg:#1f1e1d;--surface:#262624;--ink:#faf9f5;--muted:#a3a198;--line:#3a3935;--hover:#30302e;--blue:#7fa9d4;--green:#8fa573}
+*,*::before,*::after{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:14px;line-height:1.5;-webkit-font-smoothing:antialiased}
+.wrap{max-width:1040px;margin:0 auto;padding:40px 20px 64px}
+header{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;flex-wrap:wrap;margin-bottom:28px}
+.tools{display:flex;align-items:center;gap:6px}
+h1{font-family:var(--serif);font-weight:500;font-size:30px;letter-spacing:-.01em;margin:0}
+.sub{color:var(--muted);margin:2px 0 0}
+.status{display:inline-flex;align-items:center;gap:6px;color:var(--muted);font-size:12px;margin-top:6px}
+h2{font-family:var(--serif);font-weight:500;font-size:20px;margin:40px 0 8px}
+button{font:inherit;color:inherit;cursor:pointer}
+.btn{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);background:var(--surface);padding:8px 14px;border-radius:8px;font-weight:500}
+.btn:hover{background:var(--hover)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.btn.primary:hover{filter:brightness(.93)}
+.btn.danger{margin-right:auto;color:#c0392b}
+svg.i{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;flex:none}
+.bar{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:12px}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:9px;padding:3px;background:var(--surface)}
+.seg button{border:0;background:none;padding:6px 14px;border-radius:6px;color:var(--muted);font-weight:500}
+.seg button.on{background:var(--hover);color:var(--ink)}
+.legend{display:flex;gap:16px;flex-wrap:wrap;color:var(--muted);font-size:13px}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.dot{width:9px;height:9px;border-radius:50%;display:inline-block;flex:none}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:16px}
+#chartWrap{position:relative;width:100%}
+.empty{display:none;text-align:center;color:var(--muted);padding:56px 0}
+.row{display:flex;align-items:center;gap:12px;padding:8px 4px;border-bottom:1px solid var(--line)}
+.row:last-child{border-bottom:0}
+.row .name{flex:1;min-width:0;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tag{font-size:12px;color:var(--muted);border:1px solid var(--line);border-radius:999px;padding:1px 9px}
+.tag.t{border-style:dashed}
+.date{color:var(--muted);white-space:nowrap}
+.icon-btn{border:0;background:none;color:var(--muted);padding:7px;border-radius:7px;display:inline-flex}
+.icon-btn:hover{background:var(--hover);color:var(--ink)}
+.hintline{color:var(--muted);font-size:12px;margin:10px 2px 0}
+dialog{border:1px solid var(--line);border-radius:14px;background:var(--surface);color:var(--ink);padding:24px;width:min(420px,calc(100vw - 32px))}
+dialog::backdrop{background:rgba(20,20,19,.45)}
+dialog h3{font-family:var(--serif);font-weight:500;font-size:22px;margin:0 0 16px}
+.field{display:block;margin-bottom:14px}
+.field>span{display:block;color:var(--muted);font-size:13px;margin-bottom:5px}
+input,select{font:inherit;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:8px 10px;width:100%;color-scheme:light dark}
+input:focus,select:focus{outline:2px solid var(--accent);outline-offset:-1px;border-color:transparent}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.check{display:flex;align-items:center;gap:8px;margin-bottom:6px;cursor:pointer}
+.check input{width:16px;height:16px;accent-color:var(--accent);padding:0}
+.hint{color:var(--muted);font-size:12px;margin:0 0 14px}
+.err{color:#c0392b;margin:0 0 12px;display:none}
+.actions{display:flex;justify-content:flex-end;gap:8px;margin-top:8px}
+@media(max-width:560px){.tag{display:none}.wrap{padding-top:24px}}
+</style>
+</head>
+<body>
+<svg style="display:none" aria-hidden="true">
+  <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+  <symbol id="i-trash" viewBox="0 0 24 24"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 12a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2l1-12M9 7V4h6v3"/></symbol>
+  <symbol id="i-edit" viewBox="0 0 24 24"><path d="M4 20h4L19 9a2.8 2.8 0 0 0-4-4L4 16v4zM13.5 6.5l4 4"/></symbol>
+  <symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></symbol>
+  <symbol id="i-moon" viewBox="0 0 24 24"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z"/></symbol>
+  <symbol id="i-down" viewBox="0 0 24 24"><path d="M12 4v11M7 11l5 5 5-5M5 20h14"/></symbol>
+  <symbol id="i-up" viewBox="0 0 24 24"><path d="M12 16V5M7 9l5-5 5 5M5 20h14"/></symbol>
+  <symbol id="i-cloud" viewBox="0 0 24 24"><path d="M7 18a4 4 0 0 1-.6-8A6 6 0 0 1 18 9.5a4.2 4.2 0 0 1-.5 8.5H7z"/></symbol>
+  <symbol id="i-disk" viewBox="0 0 24 24"><path d="M5 4h11l3 3v13H5zM8 4v5h7V4M8 20v-6h8v6"/></symbol>
+</svg>
+
+<div class="wrap">
+  <header>
+    <div>
+      <h1>Exam tracker</h1>
+      <p class="sub">Exam dates and application deadlines in one timeline.</p>
+      <div class="status" id="status"></div>
+    </div>
+    <div class="tools">
+      <button class="icon-btn" id="theme" title="Toggle light / dark" aria-label="Toggle theme"></button>
+      <button class="icon-btn" id="export" title="Export data (JSON)" aria-label="Export data"><svg class="i"><use href="#i-down"/></svg></button>
+      <button class="icon-btn" id="import" title="Import data (JSON)" aria-label="Import data"><svg class="i"><use href="#i-up"/></svg></button>
+      <input type="file" id="file" accept="application/json,.json" hidden>
+      <button class="btn primary" id="openForm" style="margin-left:6px"><svg class="i"><use href="#i-plus"/></svg>Add entry</button>
+    </div>
+  </header>
+
+  <div class="bar">
+    <div class="seg" id="tabs" role="tablist">
+      <button data-v="exam">Exams</button>
+      <button data-v="app">Applications</button>
+      <button data-v="both">Both</button>
+    </div>
+    <div class="legend">
+      <span><i class="dot" style="background:var(--blue)"></i>Banking</span>
+      <span><i class="dot" style="background:var(--green)"></i>Railways / SSC</span>
+      <span><i class="dot" style="background:var(--orange)"></i>Other</span>
+    </div>
+  </div>
+
+  <div class="card">
+    <div id="chartWrap"><canvas id="chart"></canvas></div>
+    <div class="empty" id="empty">No entries in this view yet.</div>
+  </div>
+  <p class="hintline" id="keyline"></p>
+
+  <h2>All entries</h2>
+  <div class="card" id="list" style="padding:8px 16px"></div>
+</div>
+
+<dialog id="dlg">
+  <h3 id="dlgTitle">Add entry</h3>
+  <div class="seg" id="typeSel" style="display:flex;margin-bottom:16px">
+    <button data-t="exam" style="flex:1">Exam date</button>
+    <button data-t="app" style="flex:1">Application deadline</button>
+  </div>
+  <label class="field"><span>Name</span><input id="fName" placeholder="e.g. IBPS Clerk" autocomplete="off"></label>
+  <label class="field"><span>Category</span>
+    <select id="fCat"><option>Banking</option><option>Railways</option><option>SSC</option><option>Regulatory</option><option>Other</option></select>
+  </label>
+  <div class="grid2">
+    <label class="field"><span id="lblStart">Start date</span><input id="fStart" type="date"></label>
+    <label class="field"><span id="lblEnd">End date</span><input id="fEnd" type="date"></label>
+  </div>
+  <p class="hint" id="hint"></p>
+  <label class="check"><input type="checkbox" id="fTent"><span>Tentative date (from notification)</span></label>
+  <p class="err" id="err"></p>
+  <div class="actions">
+    <button class="btn danger" id="del" style="display:none"><svg class="i"><use href="#i-trash"/></svg>Delete</button>
+    <button class="btn" id="cancel">Cancel</button>
+    <button class="btn primary" id="save">Save</button>
+  </div>
+</dialog>
+
+<script>
+const KEY='examTrackerV1',TKEY='examTrackerTheme',BEAD=22;
+const seed=[['IBPS Clerk','2026-10-10','2026-10-11','Banking'],['RRB Sec. Officer','2026-10-12','2026-10-14','Railways'],
+['PFRDA Grade A','2026-10-15','2026-10-16','Regulatory'],['RRB JE','2026-10-27','2026-10-31','Railways'],
+['SSC JE','2026-11-02','2026-11-07','SSC'],['RRB ALP','2026-11-03','2026-11-06','Railways'],
+['IBPS RRB G1 Officer','2026-11-21','2026-11-23','Banking'],['IBPS RRB Office Assistant','2026-12-06','2026-12-14','Banking']]
+.map((e,i)=>({id:'s'+i,type:'exam',name:e[0],start:e[1],end:e[2],cat:e[3],tent:false}));
+let items,view='exam',fType='exam',editId=null,chart,beads=[];
+try{const r=localStorage.getItem(KEY);items=r?JSON.parse(r):seed}catch(e){items=seed}
+const $=id=>document.getElementById(id);
+const css=n=>getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+const D=s=>{const[y,m,d]=s.split('-').map(Number);return new Date(y,m-1,d)};
+const fmt=s=>D(s).toLocaleDateString('en-GB',{day:'numeric',month:'short'});
+const rng=x=>fmt(x.start)+(x.start!==x.end?' – '+fmt(x.end):'');
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const colVar=c=>/bank/i.test(c)?'--blue':/rail|ssc/i.test(c)?'--green':'--orange';
+const icon=id=>`<svg class="i"><use href="#${id}"/></svg>`;
+const rows=()=>items.filter(i=>view==='both'||i.type===view).sort((a,b)=>a.start.localeCompare(b.start)||a.end.localeCompare(b.end));
+
+/* ---------- persistence: data.json via local server, else this browser ---------- */
+let server=false,chain=Promise.resolve();
+function setStatus(){$('status').innerHTML=server
+  ?icon('i-disk')+'Saved to data.json on this computer.'
+  :icon('i-disk')+'Saved in this browser only. Run start.bat / node server.js to save to a file.'}
+function persist(){
+  try{localStorage.setItem(KEY,JSON.stringify(items))}catch(e){}
+  if(server){const body=JSON.stringify({items});
+    chain=chain.then(()=>fetch('api/data',{method:'PUT',headers:{'Content-Type':'application/json'},body}))
+      .then(r=>{if(!r.ok)throw 0}).catch(()=>{server=false;setStatus()})}
+}
+(async()=>{
+  try{
+    const r=await fetch('api/data',{cache:'no-store'});
+    if(!r.ok)return;
+    const j=await r.json();server=true;
+      setInterval(()=>fetch('api/ping').catch(()=>{}),5000);
+      addEventListener('pagehide',()=>navigator.sendBeacon('api/bye'));
+    if(j&&Array.isArray(j.items)){items=j.items;try{localStorage.setItem(KEY,JSON.stringify(items))}catch(e){}render()}
+    else persist();
+    setStatus();
+  }catch(e){}
+})();
+
+/* ---------- theme ---------- */
+function effectiveTheme(){const a=document.documentElement.getAttribute('data-theme');
+  return a||(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light')}
+try{const t=localStorage.getItem(TKEY);if(t)document.documentElement.setAttribute('data-theme',t)}catch(e){}
+$('theme').onclick=()=>{const n=effectiveTheme()==='dark'?'light':'dark';
+  document.documentElement.setAttribute('data-theme',n);try{localStorage.setItem(TKEY,n)}catch(e){}render()};
+
+/* ---------- rendering ---------- */
+function pill(g,x,y,w,h){const r=h/2;g.beginPath();g.moveTo(x+r,y);g.lineTo(x+w-r,y);
+  g.arc(x+w-r,y+r,r,-Math.PI/2,Math.PI/2);g.lineTo(x+r,y+h);g.arc(x+r,y+r,r,Math.PI/2,Math.PI*1.5);g.closePath()}
+
+function render(){
+  document.querySelectorAll('#tabs button').forEach(b=>b.classList.toggle('on',b.dataset.v===view));
+  $('theme').innerHTML=icon(effectiveTheme()==='dark'?'i-sun':'i-moon');
+  $('keyline').textContent=(view==='exam'?'':'Light fill = application. ')+'Dashed outline = tentative date. Double-click a bar to edit.';
+  const r=rows();
+  $('empty').style.display=r.length?'none':'block';
+  $('chartWrap').style.display=r.length?'block':'none';
+  $('chartWrap').style.height=(r.length*40+70)+'px';
+  if(chart){chart.destroy();chart=null}
+  if(r.length)drawChart(r);
+  $('list').innerHTML=r.length?r.map(x=>`
+    <div class="row" data-id="${x.id}">
+      <i class="dot" style="background:var(${colVar(x.cat)})"></i>
+      <span class="name">${esc(x.name)}</span>
+      ${x.tent?'<span class="tag t">Tentative</span>':''}
+      <span class="tag">${x.type==='app'?'Application':'Exam'}</span>
+      <span class="date">${rng(x)}</span>
+      <button class="icon-btn" data-edit="${x.id}" aria-label="Edit ${esc(x.name)}">${icon('i-edit')}</button>
+      <button class="icon-btn" data-del="${x.id}" aria-label="Delete ${esc(x.name)}">${icon('i-trash')}</button>
+    </div>`).join(''):'<div class="empty" style="display:block;padding:24px 0">Nothing to show.</div>';
+}
+
+function drawChart(r){
+  const ink=css('--ink'),muted=css('--muted'),line=css('--line'),surface=css('--surface');
+  const data=r.map(x=>[D(x.start).getTime(),D(x.end).getTime()+864e5]);
+  const beadPlugin={id:'beads',afterDatasetsDraw(c){
+    const g=c.ctx,xs=c.scales.x,meta=c.getDatasetMeta(0);beads=[];
+    r.forEach((x,i)=>{
+      const col=css(colVar(x.cat)),cy=meta.data[i].y;
+      const x0=xs.getPixelForValue(data[i][0]),x1=xs.getPixelForValue(data[i][1]);
+      let bx,bw;
+      if(x.start===x.end){bw=BEAD;bx=(x0+x1)/2-BEAD/2}else{bw=Math.max(x1-x0,BEAD);bx=x0}
+      const by=cy-BEAD/2;
+      g.save();pill(g,bx,by,bw,BEAD);
+      const light=x.type==='app'||x.tent;
+      g.fillStyle=light?col+(x.tent&&x.type==='exam'?'44':'33'):col;g.fill();
+      if(light){g.lineWidth=1.5;g.strokeStyle=col;if(x.tent)g.setLineDash([4,3]);g.stroke()}
+      g.restore();
+      beads.push({id:x.id,x:bx,y:by,w:bw,h:BEAD});
+    });
+    const a=c.chartArea,tx=xs.getPixelForValue(Date.now());
+    if(tx>=a.left&&tx<=a.right){g.save();g.strokeStyle=css('--accent');g.lineWidth=1.5;g.setLineDash([4,4]);
+      g.beginPath();g.moveTo(tx,a.top);g.lineTo(tx,a.bottom);g.stroke();g.setLineDash([]);
+      g.fillStyle=css('--accent');g.font='500 11px Inter,system-ui,sans-serif';g.textAlign='center';g.fillText('Today',tx,a.top-6);g.restore()}
+  }};
+  const pad=864e5*3;
+  chart=new Chart($('chart'),{
+    type:'bar',plugins:[beadPlugin],
+    data:{labels:r.map(x=>x.name),datasets:[{data,backgroundColor:'transparent',borderWidth:0,barPercentage:.62,categoryPercentage:.9}]},
+    options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,layout:{padding:{top:16}},
+      interaction:{mode:'index',axis:'y',intersect:false},
+      plugins:{legend:{display:false},tooltip:{backgroundColor:ink,titleColor:surface,bodyColor:surface,padding:10,cornerRadius:8,displayColors:false,
+        callbacks:{label:c=>{const x=r[c.dataIndex];return `${x.type==='app'?'Apply':'Exam'}: ${rng(x)}${x.tent?' (tentative)':''}`}}}},
+      scales:{
+        x:{type:'time',position:'top',min:Math.min(...data.map(d=>d[0]))-pad,max:Math.max(...data.map(d=>d[1]))+pad,
+          time:{unit:'week',displayFormats:{week:'d MMM'}},grid:{color:line},border:{display:false},ticks:{color:muted,font:{size:12,family:'Inter, system-ui, sans-serif'}}},
+        y:{grid:{display:false},border:{display:false},ticks:{color:ink,font:{size:13,weight:'500',family:'Inter, system-ui, sans-serif'}}}}}
+  });
+}
+function beadAt(e){const rc=$('chart').getBoundingClientRect(),x=e.clientX-rc.left,y=e.clientY-rc.top;
+  return beads.find(b=>x>=b.x-4&&x<=b.x+b.w+4&&y>=b.y-4&&y<=b.y+b.h+4)}
+$('chart').addEventListener('dblclick',e=>{const b=beadAt(e);if(b)openForm(b.id)});
+$('chart').addEventListener('mousemove',e=>{$('chart').style.cursor=beadAt(e)?'pointer':'default'});
+
+/* ---------- dialog ---------- */
+['fStart','fEnd'].forEach(id=>$(id).addEventListener('click',e=>{try{e.target.showPicker()}catch(_){}}));
+function setType(t){
+  fType=t;
+  document.querySelectorAll('#typeSel button').forEach(b=>b.classList.toggle('on',b.dataset.t===t));
+  $('lblStart').textContent=t==='exam'?'Exam start':'Opens (optional)';
+  $('lblEnd').textContent=t==='exam'?'Exam end (optional)':'Last date to apply';
+  $('hint').textContent=t==='exam'?'One-day exam? Leave the end date empty.':'Only know the deadline? Fill just the last date.';
+}
+function openForm(id){
+  editId=id||null;const x=editId&&items.find(i=>i.id===editId);
+  $('dlgTitle').textContent=x?'Edit entry':'Add entry';
+  $('del').style.display=x?'inline-flex':'none';
+  $('fName').value=x?x.name:'';$('fCat').value=x?x.cat:'Banking';
+  $('fStart').value=x?x.start:'';$('fEnd').value=x&&x.end!==x.start?x.end:'';
+  $('fTent').checked=!!(x&&x.tent);$('err').style.display='none';
+  setType(x?x.type:(view==='app'?'app':'exam'));
+  if(!$('dlg').open)$('dlg').showModal();$('fName').focus();
+}
+$('openForm').onclick=()=>openForm();
+$('cancel').onclick=()=>$('dlg').close();
+$('dlg').addEventListener('click',e=>{if(e.target===$('dlg'))$('dlg').close()});
+$('typeSel').onclick=e=>{const b=e.target.closest('button');if(b)setType(b.dataset.t)};
+$('tabs').onclick=e=>{const b=e.target.closest('button');if(b){view=b.dataset.v;render()}};
+function remove(id){items=items.filter(i=>i.id!==id);persist();render()}
+$('del').onclick=()=>{remove(editId);$('dlg').close()};
+$('list').onclick=e=>{
+  const d=e.target.closest('[data-del]');if(d)return remove(d.dataset.del);
+  const ed=e.target.closest('[data-edit]');if(ed)openForm(ed.dataset.edit)};
+$('list').addEventListener('dblclick',e=>{const r=e.target.closest('.row');if(r&&!e.target.closest('button'))openForm(r.dataset.id)});
+$('save').onclick=()=>{
+  const name=$('fName').value.trim();let s=$('fStart').value,en=$('fEnd').value;
+  const bad=m=>{$('err').textContent=m;$('err').style.display='block'};
+  if(!name)return bad('Enter a name.');
+  if(fType==='exam'){if(!s)return bad('Pick the start date.');if(!en)en=s}
+  else{if(!s&&!en)return bad('Pick the last date to apply.');if(!en)en=s;if(!s)s=en}
+  if(en<s)return bad('End date is before the start date.');
+  const rec={type:fType,name,start:s,end:en,cat:$('fCat').value,tent:$('fTent').checked};
+  if(editId)items=items.map(i=>i.id===editId?{...i,...rec}:i);
+  else items.push({id:'i'+Date.now(),...rec});
+  persist();if(view!=='both')view=fType;$('dlg').close();render()};
+$('fName').addEventListener('keydown',e=>{if(e.key==='Enter')$('save').click()});
+
+/* ---------- export / import ---------- */
+$('export').onclick=()=>{
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(new Blob([JSON.stringify(items,null,2)],{type:'application/json'}));
+  a.download='exam-tracker.json';a.click()};
+$('import').onclick=()=>$('file').click();
+$('file').onchange=async e=>{
+  const f=e.target.files[0];e.target.value='';if(!f)return;
+  try{const arr=JSON.parse(await f.text());if(!Array.isArray(arr))throw 0;
+    arr.filter(x=>x&&x.name&&x.start&&x.end).forEach(x=>{
+      if(!items.some(i=>i.name===x.name&&i.start===x.start&&i.type===x.type))
+        items.push({id:'i'+Date.now()+Math.random().toString(36).slice(2,6),type:x.type==='app'?'app':'exam',name:String(x.name),start:x.start,end:x.end,cat:x.cat||'Other',tent:!!x.tent})});
+    persist();render()}catch(err){}};
+
+matchMedia('(prefers-color-scheme: dark)').addEventListener('change',render);
+setStatus();render();
+</script>
+</body>
+</html>
