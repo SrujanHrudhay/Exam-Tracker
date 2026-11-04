@@ -15,7 +15,9 @@ $RECYCLE.BIN/
 .DS_Store
 *.lnk
 
-# Node / Dependencies
+# Build & distribution packages
+dist/
+*.zip
 node_modules/
 
 # Editor / IDE configs
