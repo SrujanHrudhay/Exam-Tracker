@@ -11,6 +11,13 @@ Exam Tracker brings examination dates and application deadlines together in one 
 
 The project is designed to be straightforward for non-technical users while remaining easy for developers to run and inspect.
 
+## Application Preview
+
+![Exam Tracker application overview](docs/images/exam-tracker-overview.webp)
+
+*The complete application window, showing the interactive examination timeline, category filters, deadline list, and entry controls.*
+
+
 ## Table of Contents
 
 - [Features](#features)
